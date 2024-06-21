@@ -21,6 +21,7 @@ all: $(pname)
 
 $(pname): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $(pname) $(LIBS)
+	- ./$(pname)
 
 # This is a target that will compile all needed source files into object files
 # We don't need to specify a command or any rules, "make" will handle it automatically

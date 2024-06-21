@@ -8,7 +8,9 @@ bool windowShouldClose = false;
 
 struct tm current_time;
 
-int w = 800, h = 450;
+const int w = 450, h = 600;
+const int mw = w / 3, mh = h / 4;
+const int p = 10;
 
 void HandleKeys();
 int GetDayOfWeek(int year, int month, int day);
@@ -18,7 +20,7 @@ void *safe_malloc(size_t n);
 int main() {
   time_t t = time(NULL);
   current_time = *localtime(&t);
-  InitWindow(w, h, "calendar");
+  InitWindow(w, h, "");
 
   SetTargetFPS(60);
 
@@ -73,8 +75,13 @@ int dayOfWeek(int year, int month, int day) {
 void PrintCalendar() {
   time_t t = time(NULL);
   current_time = *localtime(&t);
-  char *calendar;
-  calendar = safe_malloc(26);
-  strftime(calendar, 26, "%B", &current_time);
-  DrawText(TextFormat(calendar), w / 2, h / 2, 12, WHITE);
+  current_time.tm_mon = 0;
+  for (int j = 0; j < h; j += mh) {
+    for (int i = 0; i < w; i += mw) {
+      char *calendar = safe_malloc(0);
+      strftime(calendar, 16, "%B  %Y", &current_time);
+      DrawText(TextFormat(calendar), i + p, j + p, 12, WHITE);
+      current_time.tm_mon += 1;
+    }
+  }
 }
