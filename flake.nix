@@ -37,7 +37,7 @@
         FONT_PATH = "${pkgs.font}/share/fonts/truetype/NerdFonts/FiraCodeNerdFontMono-Bold.ttf";
       };
     in
-    {
+    rec {
       devShells.${system}.default = pkgs.mkShell {
         inherit nativeBuildInputs env;
         buildInputs = buildInputs ++ (with pkgs; [ nvim entr ]);
@@ -47,6 +47,9 @@
           inherit buildInputs nativeBuildInputs pname version src env;
         };
         font = pkgs.font;
+      };
+      overlays.default = final: prev: {
+        sal = packages.${system}.default;
       };
     };
 }
