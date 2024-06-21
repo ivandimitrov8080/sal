@@ -75,6 +75,6 @@ void PrintCalendar() {
   current_time = *localtime(&t);
   char *calendar;
   calendar = safe_malloc(26);
-  strftime(calendar, 26, "%c", &current_time);
+  strftime(calendar, 26, "%B", &current_time);
   DrawText(TextFormat(calendar), w / 2, h / 2, 12, WHITE);
 }
