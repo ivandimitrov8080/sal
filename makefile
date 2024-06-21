@@ -8,20 +8,17 @@ CFLAGS = -Wall
 LDFLAGS =
 
 # Libraries to link with (none for the moment)
-LIBS =
+LIBS = -lraylib
 
 # This creates a list of object files from the source files
 OBJECTS = $(SOURCES:%.c=%.o)
 
-# The first target, this will be the default target if none is specified
-# This target tells "make" to make the "all" target
+pname ?= sal
+
 default: all
 
-# Having an "all" target is customary, so one could write "make all"
-# It depends on the executable program
 all: $(pname)
 
-# This will link the executable from the object files
 $(pname): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $(pname) $(LIBS)
 
@@ -32,8 +29,8 @@ $(pname): $(OBJECTS)
 
 # Target to clean up after us
 clean:
-	-rm -f $(pname)      # Remove the executable file
-	-rm -f $(OBJECTS)  # Remove the object files
+	-rm -f $(pname)	# Remove the executable file
+	-rm -f $(OBJECTS)	# Remove the object files
 
 install: $(pname)
 	mkdir -p $(out)/bin

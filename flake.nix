@@ -20,22 +20,14 @@
         })
       ];
       };
-      pname = "hello-world";
-      version = "0.0.1";
+      pname = "sal";
+      version = "0.1.0";
       src = ./.;
       buildInputs = with pkgs; [
         raylib
         wayland
       ];
       nativeBuildInputs = with pkgs; [
-        # add build dependencies here
-        ## For mesonbuild:
-        #meson ninja
-        ## For cmake:
-        #cmake
-        ## For autotools:
-        # autoconf-archive
-        # autoreconfHook
         pkg-config
       ];
       env = {

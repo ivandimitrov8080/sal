@@ -3,3 +3,7 @@ result*
 
 # Misc
 .direnv
+
+*.o
+
+sal
