@@ -6,12 +6,11 @@
 
 bool windowShouldClose = false;
 
-struct tm current_time;
-const int totalDaysWeek = 7;
+Font font;
 
-const int w = 600, h = 600;
-const int mw = w / 3, mh = h / 4;
-const int p = 10;
+struct tm current_time;
+
+const int w = 700, h = 600;
 
 void HandleKeys();
 int GetDayOfWeek(int year, int month, int day);
@@ -22,6 +21,11 @@ int main() {
   time_t t = time(NULL);
   current_time = *localtime(&t);
   InitWindow(w, h, "");
+
+  char *fontPath = getenv("FONT_PATH");
+
+  printf("Loading font %s\n", fontPath);
+  font = LoadFont(fontPath);
 
   SetTargetFPS(60);
 
@@ -126,29 +130,34 @@ int getTotalWeeksInMonth(struct tm *timeptr) {
 }
 
 void PrintCalendar() {
+  const int dx = 30, dy = 15;
+  const int totalDaysWeek = 7;
+  const int monthWidth = w / 3, monthHeight = h / 4;
+  const int p = 10;
+
   struct tm time = current_time;
   time.tm_mon = 0;
   time.tm_mday = 1;
   mktime(&time);
-  for (int j = 0; j < h; j += mh) {
-    for (int i = 0; i < w; i += mw) {
-      int x0 = i + p, y0 = j + p;
+  for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 3; i++) {
+      int x0 = (i * monthWidth) + p, y0 = (j * monthHeight) + p;
       int totalDays = getTotalDaysInMonth(&time);
       int totalWeeks = getTotalWeeksInMonth(&time);
       int weekday = time.tm_wday;
       char *month_name = safe_malloc(0);
       strftime(month_name, 16, "%B  %Y", &time);
-      DrawText(TextFormat(month_name), x0, y0, 12, PINK);
+      DrawTextEx(font, TextFormat(month_name), (Vector2){x0, y0}, 17, 2, PINK);
       for (time.tm_wday = 0; time.tm_wday < totalDaysWeek; time.tm_wday++) {
+        int x = (x0 + (time.tm_wday * dx)), y = (y0 + dy);
         char *weekday = safe_malloc(0);
         strftime(weekday, 4, "%a", &time);
-        DrawText(TextFormat(weekday), (x0 + (time.tm_wday * 25)), (y0 + 15), 8,
-                 YELLOW);
+        DrawTextEx(font, TextFormat(weekday), (Vector2){x, y}, 15, 1, YELLOW);
       }
       int l = weekday;
       int k = 0;
       for (time.tm_mday = 1; time.tm_mday <= totalDays; time.tm_mday++) {
-        int x = x0 + p + l++ * 25, y = y0 + p + k * 15 + 20;
+        int x = x0 + l++ * dx, y = y0 + p + k * dy + 20;
         l = l > totalDaysWeek - 1 ? 0 : l;
         if (l == 0) {
           k = k > totalWeeks - 1 ? 0 : k + 1;
@@ -159,7 +168,7 @@ void PrintCalendar() {
                    time.tm_mon == current_time.tm_mon)
                       ? GREEN
                       : MAROON;
-        DrawText(TextFormat(day), x, y, 12, c);
+        DrawTextEx(font, TextFormat(day), (Vector2){x, y}, 15, 2, c);
       }
       time.tm_mon += 1;
       time.tm_mday = 1;
