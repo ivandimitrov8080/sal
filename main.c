@@ -58,11 +58,11 @@ void HandleKeys() {
     windowShouldClose = true;
   }
   if (IsKeyPressed(KEY_J)) {
-    current_time.tm_mon += 1;
+    current_time.tm_mday += 7;
     mktime(&current_time);
   }
   if (IsKeyPressed(KEY_K)) {
-    current_time.tm_mon -= 1;
+    current_time.tm_mday -= 7;
     mktime(&current_time);
   }
   if (IsKeyPressed(KEY_H)) {
@@ -72,6 +72,10 @@ void HandleKeys() {
   if (IsKeyPressed(KEY_L)) {
     current_time.tm_mday += 1;
     mktime(&current_time);
+  }
+  if (IsKeyPressed(KEY_R)) {
+    time_t t = time(NULL);
+    current_time = *localtime(&t);
   }
 }
 
