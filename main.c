@@ -7,8 +7,9 @@
 bool windowShouldClose = false;
 
 struct tm current_time;
+const int wd = 7;
 
-const int w = 450, h = 600;
+const int w = 600, h = 600;
 const int mw = w / 3, mh = h / 4;
 const int p = 10;
 
@@ -72,16 +73,38 @@ int dayOfWeek(int year, int month, int day) {
   return (year + year / 4 - year / 100 + year / 400 + t[month - 1] + day) % 7;
 }
 
+int getTotalDaysInMonth(struct tm *date) {
+  int originalDay = date->tm_mday;
+  date->tm_mday = 0;
+  mktime(date);
+  int daysInMonth = date->tm_mday;
+  date->tm_mday = originalDay;
+  return daysInMonth;
+}
+
 void PrintCalendar() {
   time_t t = time(NULL);
   current_time = *localtime(&t);
   current_time.tm_mon = 0;
   for (int j = 0; j < h; j += mh) {
     for (int i = 0; i < w; i += mw) {
-      char *calendar = safe_malloc(0);
-      strftime(calendar, 16, "%B  %Y", &current_time);
-      DrawText(TextFormat(calendar), i + p, j + p, 12, WHITE);
+      int x0 = i + p, y0 = j + p;
+      char *month_name = safe_malloc(0);
+      strftime(month_name, 16, "%B  %Y", &current_time);
+      DrawText(TextFormat(month_name), x0, y0, 12, PINK);
       current_time.tm_mon += 1;
+      for (current_time.tm_wday = 0; current_time.tm_wday < wd;
+           current_time.tm_wday++) {
+        char *weekday = safe_malloc(0);
+        strftime(weekday, 4, "%a", &current_time);
+        DrawText(TextFormat(weekday), (x0 + (current_time.tm_wday * 25)),
+                 (y0 + 15), 8, YELLOW);
+      }
+      // for (; current_time.tm_mday < totalDays; current_time.tm_mday++) {
+      //   char *month_name = safe_malloc(0);
+      //   strftime(month_name, 16, "%a", &current_time);
+      //   DrawText(TextFormat(month_name), x0, y0, 12, WHITE);
+      // }
     }
   }
 }
