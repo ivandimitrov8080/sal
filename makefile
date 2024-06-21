@@ -38,7 +38,7 @@ clean:
 
 install: $(pname)
 	mkdir -p $(out)/bin
-	install -m 755 $(pname) $(out)/bin/$(pname)
+	install -m 755 $(pname) $(out)/bin/$(pname)-unwrapped
 
 main.o: main.c
 

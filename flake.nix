@@ -31,6 +31,7 @@
       ];
       nativeBuildInputs = with pkgs; [
         pkg-config
+        makeBinaryWrapper
       ];
       env = {
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
@@ -40,11 +41,18 @@
     rec {
       devShells.${system}.default = pkgs.mkShell {
         inherit nativeBuildInputs env;
-        buildInputs = buildInputs ++ (with pkgs; [ nvim entr ]);
+        buildInputs = buildInputs ++ (with pkgs; [ nvim ]);
       };
       packages.${system} = {
         default = pkgs.stdenv.mkDerivation {
           inherit buildInputs nativeBuildInputs pname version src env;
+          installPhase = ''
+            runHook preInstall
+            make install
+            wrapperfile=$out/bin/${pname}
+            makeBinaryWrapper $out/bin/${pname}-unwrapped $wrapperfile --set LD_LIBRARY_PATH ${env.LD_LIBRARY_PATH} --set FONT_PATH ${env.FONT_PATH}
+            runHook postInstall
+          '';
         };
         font = pkgs.font;
       };
