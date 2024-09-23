@@ -3,21 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    ide = { url = "github:ivandimitrov8080/flake-ide"; inputs.nixpkgs.follows = "nixpkgs"; };
   };
 
   outputs =
     { nixpkgs
-    , ide
     , ...
     }:
     let
       system = "x86_64-linux";
-      nv = ide.nvim.${system}.standalone;
       pkgs = import nixpkgs {
         inherit system; overlays = [
         (final: prev: {
-          nvim = nv.c { };
           font = pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; };
         })
       ];
@@ -41,7 +37,7 @@
     rec {
       devShells.${system}.default = pkgs.mkShell {
         inherit nativeBuildInputs env;
-        buildInputs = buildInputs ++ (with pkgs; [ nvim ]);
+        buildInputs = buildInputs;
       };
       packages.${system} = {
         default = pkgs.stdenv.mkDerivation {
