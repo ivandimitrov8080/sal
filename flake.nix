@@ -1,20 +1,21 @@
 {
-  description = "C Template";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-  };
-
+  inputs.configuration.url = "github:ivandimitrov8080/configuration.nix";
   outputs =
-    { nixpkgs
+    { configuration
     , ...
     }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
+      pkgs = import configuration.inputs.nixpkgs {
         inherit system; overlays = [
+        configuration.overlays.default
         (final: prev: {
           font = pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; };
+          nvim = prev.nvim.extend {
+            plugins.lsp.servers = {
+              clangd.enable = true;
+            };
+          };
         })
       ];
       };
@@ -37,7 +38,7 @@
     rec {
       devShells.${system}.default = pkgs.mkShell {
         inherit nativeBuildInputs env;
-        buildInputs = buildInputs;
+        buildInputs = buildInputs ++ [ pkgs.nvim ];
       };
       packages.${system} = {
         default = pkgs.stdenv.mkDerivation {
