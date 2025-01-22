@@ -10,7 +10,7 @@
         inherit system; overlays = [
         configuration.overlays.default
         (final: prev: {
-          font = pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; };
+          font = prev.nerd-fonts.fira-code;
           nvim = prev.nvim.extend {
             plugins.lsp.servers = {
               clangd.enable = true;
