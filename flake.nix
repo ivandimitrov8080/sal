@@ -6,7 +6,7 @@
     }:
     let
       system = "x86_64-linux";
-      pkgs = import configuration.inputs.nixpkgs {
+      pkgs = import configuration.inputs.nixpkgs-unstable {
         inherit system; overlays = [
         configuration.overlays.default
         (final: prev: {
